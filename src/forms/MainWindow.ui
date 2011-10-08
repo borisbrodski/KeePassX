@@ -145,6 +145,7 @@
     </widget>
     <addaction name="FileNewAction"/>
     <addaction name="FileOpenAction"/>
+    <addaction name="FileSynchronizeAction" />
     <addaction name="menuBookmarks"/>
     <addaction name="FileCloseAction"/>
     <addaction name="separator"/>
@@ -581,6 +582,11 @@
   <action name="EditGroupSortAction">
    <property name="text">
     <string>Sort groups</string>
+   </property>
+  </action>
+  <action name="FileSynchronizeAction" >
+   <property name="text" >
+    <string>S&amp;ynchronize Database...</string>
    </property>
   </action>
   <action name="ViewMinimizeAction">

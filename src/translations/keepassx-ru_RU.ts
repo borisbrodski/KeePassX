@@ -2241,6 +2241,182 @@ Please consider:
     <message>
         <source>Ctrl+M</source>
         <translation type="unfinished"></translation>
+    <message>
+        <location filename="../mainwindow.cpp" line="610"/>
+        <source>Information</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="622"/>
+        <source>WARNING! Synchronization has not yet been well tested.
+WARNING! It can cause database corruption.
+
+So please BACKUP your databases first!
+
+The synchronization proceeds as following:
+1 You choose a database to synchronize with the current database
+2 The current and the chosen database will be recursively processed
+  - all missing groups and items in one database will be copied
+    to the other and vice versa
+  - all existing groups matched by title will be synchronized
+    (current database has a priority)
+  - all existing items matched by title will be synchronized
+    (according to last modification time)
+  - all groups and items whose title ends with &quot;</source>
+        <translation type="obsolete">ВНИМАНИЕ!  Синхронизация еще не протестирована в достаточной степени.
+ВНИМАНИЕ!  Синхронизация может повредить одну или обе базы паролей.
+
+Пожалуйста, сделайте РЕЗЕРВНЫЕ КОПИИ баз паролей.
+
+Принцип работы синхронизации:
+1 Вы выбираете другую базу паролей для синхронизации с окрытой базой
+2 Обе базы паролей обрабатываются рекурсивно
+  - все существующие только в одной базе группы и записи переписываются
+    в другую
+  - все существующие в обеих базах группы и записи синхронизируются
+  - все группы и записи имя которых заканчивается на &quot;delete.it&quot; стираются
+    из обеех баз паролей</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="629"/>
+        <source>Please, open a database first.</source>
+        <translation>Для начала откройте пожалуйста базу паролей.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="633"/>
+        <source>Open Database to synchronize with...</source>
+        <translation>Выбор базы паролей для синхронизации...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="637"/>
+        <source>Can&apos;t synchronize with the own file.</source>
+        <translation>База паролей уже открыта. Выберете другую базу паролей нельзя синхронизации.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="730"/>
+        <source>Error saving current file</source>
+        <translation>Ошибка сохранения файла</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="651"/>
+        <source>The current file was modified and must be saved before synchronization can proceed.
+Do you want to save the changes?</source>
+        <translation>Базу паролей необходимо сохранить перед началом синхронизации.
+Продолжить?</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="695"/>
+        <source>Synchronization complete</source>
+        <translation>Синхронизация завершена</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="696"/>
+        <source>Synchronization successfully finished.
+
+</source>
+        <translation>Синхронизация завершена.
+
+</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="697"/>
+        <source>Groups processed: </source>
+        <translation>Групп обработано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="699"/>
+        <source>Groups created: </source>
+        <translation>Групп создано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="701"/>
+        <source>Groups synchronized: </source>
+        <translation>Групп синхронизировано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="703"/>
+        <source>Groups deleted: </source>
+        <translation>Групп стёрто: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="705"/>
+        <source>Entries processed: </source>
+        <translation>Записей обработано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="707"/>
+        <source>Entries created: </source>
+        <translation>Записей создано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="709"/>
+        <source>Entries synchronized: </source>
+        <translation>Записей синхронизировано: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="711"/>
+        <source>Entries deleted: </source>
+        <translation>Записей стёрто: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="718"/>
+        <source>Unknown error while saving database: </source>
+        <translation>Неизвестная ошибка при сохранении базы паролей: </translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="721"/>
+        <source>The following error occurred while saving the database:</source>
+        <translation>Ошибка при сохранении базы паролей:</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="722"/>
+        <source>Error:</source>
+        <translation>Ошибка:</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="726"/>
+        <source>Close failed</source>
+        <translation>Ошибка закрытия файла</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="627"/>
+        <source>WARNING! Synchronization has not yet been well tested.
+WARNING! It can cause database corruption.
+
+So please BACKUP your databases first!
+
+The synchronization proceeds as following:
+1 You choose a database to synchronize with the current database
+2 The current and the chosen database will be recursively processed
+  - all missing groups and items in one database will be copied
+    to the other and vice versa
+  - all existing groups matched by title will be synchronized
+    (current database has a priority)
+  - all existing items matched by title will be synchronized
+    (according to last modification time)
+  - all groups and items whose title ends with &quot;.deleteit&quot; will be deleted
+    in both databases
+
+Please consider:
+- No conflicts resolving is possible
+- No stored icons synchronization is implemented yet</source>
+        <translation type="unfinished">ВНИМАНИЕ!  Синхронизация еще не протестирована в достаточной степени.
+ВНИМАНИЕ!  Синхронизация может повредить одну или обе базы паролей.
+
+Пожалуйста, сделайте РЕЗЕРВНЫЕ КОПИИ баз паролей.
+
+Принцип работы синхронизации:
+1 Вы выбираете другую базу паролей для синхронизации с окрытой базой
+2 Обе базы паролей обрабатываются рекурсивно
+  - все существующие только в одной базе группы и записи
+    переписываются в другую
+  - все существующие в обеих базах группы и записи синхронизируются
+  - все группы и записи имя которых заканчивается на &quot;delete.it&quot; стираются
+    из обеех баз паролей
+
+Обращаем Ваше внимание на то что:
+- Распознование конфликтов не поддерживается
+- Синхронизация сохраненных в базе иконок пока не реализована</translation>
     </message>
 </context>
 <context>

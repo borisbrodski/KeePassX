@@ -216,6 +216,7 @@ HEADERS += main.h \
            KpxConfig.h \
            Database.h \
            Kdb3Database.h \
+           sync.h \
            lib/AutoType.h \
            lib/bookmarks.h \
            lib/EntryView.h \
@@ -280,6 +281,7 @@ SOURCES += main.cpp \
            KpxConfig.cpp \
            Database.cpp \
            Kdb3Database.cpp \
+           sync.cpp \
            lib/bookmarks.cpp \
            lib/EntryView.cpp \
            lib/FileDialogs.cpp \

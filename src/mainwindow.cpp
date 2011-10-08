@@ -46,6 +46,7 @@
 #if defined(GLOBAL_AUTOTYPE) && defined(Q_WS_MAC)
 #include "lib/HelperMacX.h"
 #endif
+#include "sync.h"
 
 Import_KeePassX_Xml import_KeePassX_Xml;
 Import_PwManager import_PwManager;
@@ -147,6 +148,7 @@ KeepassMainWindow::KeepassMainWindow(const QString& ArgFile,bool ArgMin,bool Arg
 void KeepassMainWindow::setupConnections(){
 	connect(FileNewAction, SIGNAL(triggered()), this, SLOT(OnFileNewKdb()));
 	connect(FileOpenAction, SIGNAL(triggered()), this, SLOT(OnFileOpen()));
+	connect(FileSynchronizeAction, SIGNAL(triggered()), this, SLOT(OnFileSynchronize()));
 	connect(FileCloseAction, SIGNAL(triggered()), this, SLOT(OnFileClose()));
 	connect(FileSaveAction, SIGNAL(triggered()), this, SLOT(OnFileSave()));
 	connect(FileSaveAsAction, SIGNAL(triggered()), this, SLOT(OnFileSaveAs()));
@@ -639,6 +641,132 @@ void KeepassMainWindow::OnFileOpen(){
 			tr("Open Database..."),QStringList()<<tr("KeePass Databases (*.kdb)")<< tr("All Files (*)"));
 	if (!filename.isEmpty())
 		openFile(filename);
+}
+
+void KeepassMainWindow::OnFileSynchronize(){
+	QMessageBox::information(this, tr("Information"), tr("WARNING! Synchronization has not yet been well tested.\n"
+			"WARNING! It can cause database corruption.\n\n"
+			"So please BACKUP your databases first!\n\n"
+			"The synchronization proceeds as following:\n"
+			"1 You choose a database to synchronize with the current database\n"
+			"2 The current and the chosen database will be recursively processed\n"
+			"  - all missing groups and items in one database will be copied\n"
+			"    to the other and vice versa\n"
+			"  - all existing groups matched by title will be synchronized\n"
+			"    (current database has a priority)\n"
+			"  - all existing items matched by title will be synchronized\n"
+			"    (according to last modification time)\n"
+			"  - all groups and items whose title ends with \".deleteit\" will be deleted\n"
+			"    in both databases\n" 
+			"\n"
+			"Please consider:\n"
+			"- No conflicts resolving is possible\n"
+			"- No stored icons synchronization is implemented yet"));
+	if (!FileOpen){
+		QMessageBox::critical(this, tr("Error"), tr("Please, open a database first."));
+		return;
+	}
+	QString filename=KpxFileDialogs::openExistingFile(this,"MainWindow_FileOpen",
+			tr("Open Database to synchronize with..."),QStringList()<<tr("KeePass Databases (*.kdb)")<< tr("All Files (*)"));
+	if(filename.isEmpty())return;
+
+	if(db->file()->fileName()==filename){
+		QMessageBox::critical(this, tr("Error"), tr("Can't synchronize with the own file."));
+		return;
+	}
+
+	if(ModFlag){
+		if(config->autoSave() && db->file()){
+			if(!OnFileSave()){
+				QMessageBox::critical(this, tr("Error"), tr("Error saving current file"));
+				return;
+			}
+		}
+		else{
+			QMessageBox::StandardButton r=QMessageBox::question(this,tr("Save modified file?"),
+							tr("The current file was modified and must be saved before synchronization can proceed.\n"
+							   "Do you want to save the changes?"),
+							QMessageBox::Yes|QMessageBox::Cancel, QMessageBox::Yes);
+			if(r==QMessageBox::Cancel) return ; //Cancel
+			if(r==QMessageBox::Yes){ //Yes (Save file)
+				if(!OnFileSave()){
+					QMessageBox::critical(this, tr("Error"), tr("Error saving current file"));
+					return;
+				}
+			}
+		}
+	}
+
+	Kdb3Database dbToSync;
+	while (true){
+		PasswordDialog dlg(this,PasswordDialog::Mode_Ask,PasswordDialog::Flag_Auto);
+		if (InUnLock){
+			dlg.setWindowModality(Qt::WindowModal);
+			unlockDlg = &dlg;
+		}
+		unlockDlg = &dlg;
+
+		bool rejected = (dlg.exec()==PasswordDialog::Exit_Cancel);
+		if (InUnLock)
+			unlockDlg = NULL;
+		if (rejected)
+			return ;
+
+		dbToSync.setKey(dlg.password(),dlg.keyFile());
+		if(!dbToSync.load(filename, false)){
+			QString error=dbToSync.getError();
+			if(error.isEmpty()){
+				QMessageBox::critical(this, tr("Error"), tr("Unknown error while loading database."));
+				return;
+			}else
+				QMessageBox::critical(this,tr("Error"),
+								  QString("%1\n%2").arg(tr("The following error occured while opening the database:"))
+								  .arg(error));
+		}else
+			break;
+	}
+
+	DatabaseSynchronizer dbsync;
+	dbsync.synchronize(dynamic_cast<IDatabase*>(db), static_cast<IDatabase*>(&dbToSync));
+
+	QMessageBox::information(this, tr("Synchronization complete"), QString("%1\n \n%2%3\n%4%5\n%6%7\n%8%9\n \n%10%11\n%12%13\n%14%15\n%16%17")
+			.arg(tr("Synchronization successfully finished.\n\n"))
+			.arg(tr("Groups processed: "))
+			.arg(dbsync.statistic().groupsProcessed)
+			.arg(tr("Groups created: "))
+			.arg(dbsync.statistic().groupsCreated)
+			.arg(tr("Groups synchronized: "))
+			.arg(dbsync.statistic().groupsSynchronized)
+			.arg(tr("Groups deleted: "))
+			.arg(dbsync.statistic().groupsDeleted)
+			.arg(tr("Entries processed: "))
+			.arg(dbsync.statistic().entriesProcessed)
+			.arg(tr("Entries created: "))
+			.arg(dbsync.statistic().entriesCreated)
+			.arg(tr("Entries synchronized: "))
+			.arg(dbsync.statistic().entriesSynchronized)
+			.arg(tr("Entries deleted: "))
+			.arg(dbsync.statistic().entriesDeleted)
+			);
+
+	if(!dbToSync.save()){
+		QString error=dbToSync.getError();
+		if(error.isEmpty())
+			QMessageBox::critical(this, tr("Error"), QString("%1\n%2").arg(tr("Unknown error while saving database: ")).arg(filename));
+		else
+			QMessageBox::critical(this,tr("Error"),
+							  QString("%1\n%2\n%3\%4").arg(tr("The following error occurred while saving the database:"))
+							  .arg(filename).arg(tr("Error:")).arg(error));
+		return;
+	}
+	if (!dbToSync.close())
+		QMessageBox::critical(this, tr("Error"), tr("Close failed"));
+	GroupView->createItems();
+	EntryView->showGroup(NULL);
+	if(!OnFileSave()){
+		QMessageBox::critical(this, tr("Error"), tr("Error saving current file"));
+		return;
+	}
 }
 
 void KeepassMainWindow::OnFileClose(){

@@ -49,6 +49,7 @@ class KeepassMainWindow : public QMainWindow, private Ui_MainWindow{
 		void OnFileNewKdb();
 		//void OnFileNewKxdb(); // TODO Kxdb
 		void OnFileOpen();
+		void OnFileSynchronize();
 		void OnFileClose();
 		bool OnFileSave();
 		bool OnFileSaveAs();
